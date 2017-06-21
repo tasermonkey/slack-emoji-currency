@@ -70,10 +70,10 @@ class TransactionController(appProps: AppProps) {
                     name = toUser
                 }
             }
-            val lp1 = if (userId > toUser) userId else toUser
+            val lp1 = if (userId >= toUser) userId else toUser
             val lp2 = if (userId > toUser) toUser else userId
             val rawAmount = parsedText[EmojiEntry::amount.name]!!.toInt()
-            val calcAmount = if (userName > toUser) -rawAmount else rawAmount
+            val calcAmount = if (userId >= toUser) -rawAmount else rawAmount
             val lEmoji = parsedText[EmojiEntry::emoji.name]!!
 
             val existing = EmojiLedger.slice(EmojiLedger.id)
@@ -89,7 +89,7 @@ class TransactionController(appProps: AppProps) {
                     p1 = lp1
                     p2 = lp2
                     emoji = lEmoji
-                    amount = rawAmount
+                    amount = calcAmount
                 }
             }
             mapOf("response_type" to "in_channel",
@@ -138,7 +138,7 @@ class TransactionController(appProps: AppProps) {
                         mapOf(
                                 "other" to if (currentIsFirst) it[EmojiLedger.p2] else it[EmojiLedger.p1],
                                 "emoji" to it[EmojiLedger.emoji],
-                                "amount" to if (currentIsFirst) -amt else amt
+                                "amount" to if (currentIsFirst) amt else -amt
                         )
                     }
                     .groupBy({ it["other"] })
