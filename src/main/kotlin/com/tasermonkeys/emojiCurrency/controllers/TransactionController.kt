@@ -1,5 +1,6 @@
 package com.tasermonkeys.emojiCurrency.controllers
 
+import com.tasermonkeys.emojiCurrency.configuration.AppProps
 import com.tasermonkeys.emojiCurrency.exceptions.BadToken
 import com.tasermonkeys.emojiCurrency.models.EmojiEntry
 import com.tasermonkeys.emojiCurrency.models.EmojiLedger
@@ -10,7 +11,6 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.neq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.plus
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
@@ -20,7 +20,8 @@ val userMentionRegex = Regex("""<@(\w+)\|\w+>""")
 @Suppress("UNUSED_PARAMETER")
 @RestController
 @RequestMapping("/transaction")
-class TransactionController(@Value("\${expectedToken?:none}") val expectedToken: String) {
+class TransactionController(appProps: AppProps) {
+    val expectedToken = appProps.expectedToken
     /**
      * Sample post
      * ```
@@ -53,7 +54,6 @@ class TransactionController(@Value("\${expectedToken?:none}") val expectedToken:
                 "text" to text,
                 "response_url" to response_url
         ))
-        println(expectedToken)
         if (expectedToken != "none" && expectedToken != token) {
             throw BadToken()
         }
@@ -92,7 +92,8 @@ class TransactionController(@Value("\${expectedToken?:none}") val expectedToken:
                     amount = rawAmount
                 }
             }
-            mapOf("text" to "<@${userId}> have given ${rawAmount} ${lEmoji} to <@${toUser}>")
+            mapOf("response_type" to "in_channel",
+                    "text" to "<@${userId}> have given ${rawAmount} ${lEmoji} to <@${toUser}>")
         }
     }
 
@@ -121,6 +122,9 @@ class TransactionController(@Value("\${expectedToken?:none}") val expectedToken:
                 @RequestParam(value = "command") command: String,
                 @RequestParam(value = "text", required = false, defaultValue = "") text: String,
                 @RequestParam(value = "response_url") response_url: String): Map<String, Any> {
+        if (expectedToken != "none" && expectedToken != token) {
+            throw BadToken()
+        }
         return transaction {
             val summary = EmojiLedger
                     .slice(EmojiLedger.p1, EmojiLedger.p2, EmojiLedger.emoji, EmojiLedger.amount.sum())
