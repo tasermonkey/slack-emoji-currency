@@ -175,7 +175,7 @@ class TransactionController(@Value("\${expectedToken?:none}") val expectedToken:
         return mapOf(
                 "to" to userMentionRegex.find(tokenized[0])?.groups?.get(1)?.value!!,
                 EmojiEntry::emoji.name to tokenized[1],
-                EmojiEntry::amount.name to tokenized.getOrElse(2, { i -> "1" })
+                EmojiEntry::amount.name to tokenized.getOrElse(2, { _ -> "1" })
         )
     }
 }

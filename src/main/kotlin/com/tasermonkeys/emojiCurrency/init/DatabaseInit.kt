@@ -13,11 +13,8 @@ class PrepareTables {
 
     @PostConstruct
     fun init() {
-        Class.forName("org.h2.Driver");
-//        val db = Database.connect(
-//                "jdbc:sqlite:application.db", driver = "org.sqlite.JDBC")
-        val db = Database.connect("jdbc:h2:./application.db", driver = "org.h2.Driver")
-        //println("Database name = ${db.name}, ${db.vendor}")
+        Class.forName("org.h2.Driver")
+        Database.connect("jdbc:h2:./application.db", driver = "org.h2.Driver")
 
         transaction {
             SchemaUtils.create(Users, EmojiLedger)
