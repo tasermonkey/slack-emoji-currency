@@ -1,0 +1,6 @@
+{
+  "name": "Slack-emoji-currency",
+  "description": "An application that allows slack users to send each other currency in the form of emojis",
+  "image": "heroku/gradle",
+  "addons": [ "heroku-postgresql" ]
+}

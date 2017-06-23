@@ -50,6 +50,9 @@ dependencies {
 
     compile 'org.springframework.data:spring-data-rest-webmvc'
 
+    compile "com.heroku.sdk:heroku-jdbc:0.1.1"
+    compile "org.postgresql:postgresql:9.4-1201-jdbc4"
+
     testCompile 'junit:junit:4.11'
     testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
 }
@@ -57,4 +60,8 @@ dependencies {
 task wrapper(type: Wrapper) {
     gradleVersion = '4.0'
     distributionType = 'all'
+}
+
+task stage {
+    dependsOn installDist
 }
