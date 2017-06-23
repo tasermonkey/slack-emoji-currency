@@ -64,4 +64,9 @@ task wrapper(type: Wrapper) {
 
 task stage {
     dependsOn installDist
+    doLast {
+        exec {
+            commandLine(['ls', '-R', 'build'])
+        }
+    }
 }
