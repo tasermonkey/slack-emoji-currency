@@ -24,8 +24,8 @@ class PrepareTables {
         val local = "cedar-14" != System.getenv("STACK")
         val dbUrl: DatabaseUrl = DatabaseUrl.extract(local);
         val driverName = dbUrl.connection.metaData.driverName;
-
-        Database.connect(DATABASE_URL, org.postgresql.Driver::class.java.canonicalName)
+        println("**** ${DATABASE_URL} - ${dbUrl.jdbcUrl()} - ${dbUrl.username()} -- ${dbUrl.password()}}")
+        Database.connect(DATABASE_URL, org.postgresql.Driver::class.java.canonicalName, dbUrl.username(), dbUrl.password())
         transaction {
             SchemaUtils.create(Users, EmojiLedger)
         }
